@@ -61,7 +61,11 @@ public class ClientHandler {
                             }
 
                             boolean regOk = server.getAuthService().
-                                    registration(token[1], token[2], token[3]);
+                                    addNewUser(token[1], token[2], token[3]);
+                            for (int i = 0; i < token.length; i++) {
+                                System.out.println(token[i]);
+                            }
+
                             if (regOk) {
                                 sendMsg("/regok");
                             } else {
@@ -86,6 +90,11 @@ public class ClientHandler {
                                     continue;
                                 }
                                 server.privateMsg(this, token[1], token[2]);
+                            }
+                            if (str.startsWith("/nick")) {
+                                String[] token = str.split("\\s+", 2);
+                                server.getAuthService().changeNickname(token[1],login);
+                                sendMsg("/nick" + " " + token[1]);
                             }
                         } else {
                             server.broadcastMsg(this, str);
