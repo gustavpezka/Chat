@@ -94,7 +94,23 @@ public class ClientHandler {
                             if (str.startsWith("/nick")) {
                                 String[] token = str.split("\\s+", 2);
                                 server.getAuthService().changeNickname(token[1],login);
-                                sendMsg("/nick" + " " + token[1]);
+                                //sendMsg("/nick" + " " + token[1]);
+                                //authenticated = false;
+                                nickname = server.getAuthService()
+                                        .getNicknameByLoginAndPassword(token[1], token[2]);
+                                login = token[1];
+                                if (nickname != null) {
+                                    if (!server.isLoginAuthenticated(login)) {
+                                        sendMsg("/authok " + nickname);
+                                        server.subscribe(this);
+                                        authenticated = true;
+                                        break;
+                                    } else {
+                                        sendMsg("С этим логином уже вошли");
+                                    }
+                                } else {
+                                    sendMsg("Неверный логин / пароль");
+                                }
                             }
                         } else {
                             server.broadcastMsg(this, str);
