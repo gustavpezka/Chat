@@ -16,5 +16,7 @@ public interface AuthService {
      * @return true если регистрация прошла успешно
      * false если логин или никнейм уже заняты
      */
-    boolean registration(String login, String password, String nickname);
+    boolean addNewUser(String login, String password, String nickname);
+
+    void changeNickname(String nickname, String login);
 }

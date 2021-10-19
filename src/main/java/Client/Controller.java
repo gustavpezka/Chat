@@ -137,6 +137,16 @@ public class Controller implements Initializable {
                                     }
                                 });
                             }
+                            if (str.startsWith("/nick ")) {
+                                String[] token = str.split("\\s+");
+                                Platform.runLater(() -> {
+                                    clientList.getItems().clear();
+                                    for (int i = 1; i < token.length; i++) {
+                                        clientList.getItems().add(token[i]);
+                                    }
+                                    setTitle(token[1]);
+                                });
+                            }
                         } else {
                             textArea.appendText(str + "\n");
                         }
