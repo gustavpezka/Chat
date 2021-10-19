@@ -53,6 +53,7 @@ public class Controller implements Initializable {
     private Stage stage;
     private Stage regStage;
     private RegController regController;
+    private String login;
 
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
@@ -65,6 +66,7 @@ public class Controller implements Initializable {
 
         if (!authenticated) {
             nickname = "";
+            Historian.closeStream();
         }
         setTitle(nickname);
         textArea.clear();
@@ -109,10 +111,12 @@ public class Controller implements Initializable {
                             if (str.startsWith("/authok")) {
                                 nickname = str.split("\\s")[1];
                                 setAuthenticated(true);
+                                textArea.appendText(Historian.getHistory(login) + "\n");
                                 break;
                             }
                             if (str.equals("/regok")) {
                                 regController.regResult("Регистрация прошла успешно");
+
                             }
                             if (str.equals("/regno")) {
                                 regController.regResult("Логин или никнейм уже заняты");
@@ -149,6 +153,7 @@ public class Controller implements Initializable {
                             }
                         } else {
                             textArea.appendText(str + "\n");
+                            Historian.writeToHistory(str + "\n");
                         }
                     }
 
@@ -186,13 +191,14 @@ public class Controller implements Initializable {
             connect();
         }
 
-        String login = loginField.getText().trim();
+        login = loginField.getText().trim();
         String password = passwordField.getText().trim();
         String msg = String.format("/auth %s %s", login, password);
 
         try {
             out.writeUTF(msg);
             passwordField.clear();
+            Historian.historianInstance(login);
         } catch (IOException e) {
             e.printStackTrace();
         }
